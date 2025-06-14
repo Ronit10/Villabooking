@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Villas List</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f8fa;
+      margin: 0;
+      padding: 20px;
+    }
+    .search-info {
+      background: #fff;
+      padding: 15px;
+      margin-bottom: 30px;
+      border-left: 5px solid #1a73e8;
+      border-radius: 8px;
+    }
+    .villa-card {
+      display: flex;
+      background: white;
+      margin-bottom: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    .villa-card img {
+      width: 250px;
+      height: 180px;
+      object-fit: cover;
+    }
+    .villa-details {
+      padding: 20px;
+      flex: 1;
+    }
+    .villa-details h3 {
+      margin: 0 0 10px;
+      color: #1a73e8;
+    }
+    .villa-details p {
+      margin: 4px 0;
+      color: #444;
+    }
+    .villa-details button {
+      margin-top: 10px;
+      padding: 8px 16px;
+      background: #1a73e8;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .villa-details button:hover {
+      background: #155ab6;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="search-info">
+    <h2>Search Results for "{{ location }}"</h2>
+    <p><strong>Check-in:</strong> {{ checkin }} | <strong>Check-out:</strong> {{ checkout }}</p>
+  </div>
+
+  {% for v in villas %}
+  <div class="villa-card">
+    <img src="{{ v[4] }}" alt="Villa Image">
+    <div class="villa-details">
+      <h3>{{ v[1] }}</h3>
+      <p><strong>Location:</strong> {{ v[2] }}</p>
+      <p><strong>Price:</strong> ₹{{ v[3] }} per night</p>
+      <form action="/villa/{{ v[0] }}">
+        <button type="submit">Full Details</button>
+      </form>
+    </div>
+  </div>
+  {% endfor %}
+
+</body>
+</html>

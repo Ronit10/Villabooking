@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dashboard | BackbencherTrips</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f7f7f7;
+    }
+
+    .navbar {
+      background-color: white;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #ff385c;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .profile-pic {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .dropdown {
+      display: none;
+      position: absolute;
+      top: 60px;
+      right: 30px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      padding: 10px;
+      z-index: 10;
+      min-width: 150px;
+    }
+
+    .dropdown.show {
+      display: block;
+    }
+
+    .dropdown button {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      background: none;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .dashboard {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .dashboard h2 {
+      margin-bottom: 25px;
+      color: #333;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background-color: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #444;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <div class="logo">Villa Search</div>
+    <div class="nav-right">
+      <span>Welcome, {{ name }}</span>
+      <img src="https://i.pravatar.cc/40" alt="Profile" class="profile-pic" onclick="toggleDropdown()" />
+      <div class="dropdown" id="dropdown">
+        <button onclick="window.location.href='{{ url_for('logout') }}'">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="dashboard">
+    <h2>Owner Dashboard</h2>
+    <div class="card-grid">
+      <div class="card" onclick="window.location.href='{}'">🏡 My Villas</div>
+      <div class="card" onclick="window.location.href='{}'">📅 Bookings</div>
+      <div class="card">💰 Total Income: ₹{{ total_income }}</div>
+      <div class="card" onclick="window.location.href='{}'">⚙️ Account Settings</div>
+    </div>
+  </main>
+
+  <script>
+    function toggleDropdown() {
+      const dropdown = document.getElementById('dropdown');
+      dropdown.classList.toggle('show');
+    }
+
+    window.onclick = function(event) {
+      if (!event.target.matches('.profile-pic')) {
+        document.getElementById('dropdown')?.classList.remove('show');
+      }
+    };
+  </script>
+</body>
+</html>

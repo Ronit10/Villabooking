@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Login / Signup</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f7f8fa;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+  .container {
+    background: white;
+    padding: 30px 35px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgb(0 0 0 / 0.1);
+    width: 350px;
+  }
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #ff385c;
+  }
+  form {
+    margin-bottom: 20px;
+  }
+  label {
+    display: block;
+    margin-top: 12px;
+    font-weight: 600;
+    color: #333;
+  }
+  input[type=email], input[type=password], select {
+    width: 100%;
+    padding: 9px 10px;
+    margin-top: 6px;
+    border: 1.5px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+  button {
+    margin-top: 20px;
+    width: 100%;
+    padding: 11px;
+    background-color: #ff385c;
+    color: white;
+    border: none;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  button:hover {
+    background-color: #ff385c;
+  }
+  .switch-link {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 14px;
+    color: #ff385c;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h2 id="form-title">Login</h2>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <ul style="list-style:none; padding: 0;">
+        {% for category, message in messages %}
+          <li style="color: {% if category == 'danger' %}red{% elif category == 'success' %}green{% elif category == 'warning' %}orange{% endif %}; margin-bottom: 10px;">
+            {{ message }}
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+  <!-- Login Form -->
+  <form id="login-form" method="POST" action="/login">
+    <label for="login-email">Email</label>
+    <input type="email" id="login-email" name="email" required />
+
+    <label for="login-password">Password</label>
+    <input type="password" id="login-password" name="password" required />
+
+    <button type="submit">Login</button>
+
+    <div class="switch-link" onclick="showSignup()">Don't have an account? Signup here</div>
+  </form>
+
+  <!-- Signup Form -->
+  <form id="signup-form" method="POST" action="/signup" style="display:none;">
+    <label for="name">Name</label>
+    <input type="text" name="name" placeholder="Full Name" required />
+    <label for="signup-email">Email</label>
+    <input type="email" id="signup-email" name="email" required />
+
+    <label for="signup-password">Password</label>
+    <input type="password" id="signup-password" name="password" required />
+
+    <label for="role">Select Role</label>
+    <select id="role" name="role" required>
+      <option value="" disabled selected>Select your role</option>
+      <option value="owner">Owner</option>
+      <option value="guest">Guest</option>
+    </select>
+
+    <button type="submit">Signup</button>
+
+    <div class="switch-link" onclick="showLogin()">Already have an account? Login here</div>
+  </form>
+</div>
+
+<script>
+  function showSignup() {
+    document.getElementById('login-form').style.display = 'none';
+    document.getElementById('signup-form').style.display = 'block';
+    document.getElementById('form-title').innerText = 'Signup';
+  }
+  function showLogin() {
+    document.getElementById('signup-form').style.display = 'none';
+    document.getElementById('login-form').style.display = 'block';
+    document.getElementById('form-title').innerText = 'Login';
+  }
+</script>
+
+</body>
+</html>

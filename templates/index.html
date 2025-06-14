@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Villa Search</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+  body {
+    background-image: url("{{ url_for('static', filename='homebg.jpg') }}");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+  }
+    .navbar {
+      width: 100%;
+      padding: 15px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-left .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #ff385c;
+      text-decoration: none;
+    }
+
+    .nav-right {
+      position: relative;
+    }
+
+    .nav-btn {
+      padding: 8px 16px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #ff385c;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      position: relative;
+      transition: color 0.3s ease;
+    }
+
+    .nav-btn::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -2px;
+      width: 100%;
+      height: 2px;
+      background-color: #ff385c;
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 0.3s ease;
+    }
+
+    .nav-btn:hover::after {
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+
+    .profile-dropdown {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 45px;
+      background: white;
+      padding: 20px;
+      width: 220px;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      text-align: center;
+      z-index: 999;
+      animation: slideDown 0.4s ease;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+
+    .profile-dropdown.show {
+      display: flex;
+    }
+
+    .profile-pic {
+      width: 80px;
+      height: 80px;
+      background-image: url('https://i.pravatar.cc/100');
+      background-size: cover;
+      background-position: center;
+      border-radius: 50%;
+      margin: 0 auto 15px;
+    }
+
+    .profile-dropdown button {
+      padding: 10px 20px;
+      background: #ff385c;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .profile-dropdown button:hover {
+      background: #ff385c;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    h1 {
+      text-align: center;
+      margin: 30px 0;
+      color: #ff385c;
+    }
+
+    .search-form {
+      max-width: 800px;
+      margin: 0 auto 40px;
+      background: white;
+      padding: 20px 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgb(0 0 0 / 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .search-form label {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    .search-form input {
+      padding: 10px 15px;
+      font-size: 1rem;
+      border: 1.8px solid #ccc;
+      border-radius: 6px;
+    }
+
+    .search-form input:focus {
+      border-color: #ff385c;
+      outline: none;
+    }
+
+    .search-form button {
+      padding: 12px 30px;
+      background: #ff385c;
+      color: white;
+      border: none;
+      border-radius: 7px;
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+
+    .search-form button:hover {
+      background: #ff385c;
+    }
+
+    .villas-section {
+      max-width: 1000px;
+      margin: 0 auto 50px;
+    }
+
+    .section-title {
+      font-size: 1.7rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: #222;
+      border-left: 5px solid #ff385c;
+      padding-left: 10px;
+    }
+
+    .villas-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+    }
+
+    .villa-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
+      overflow: hidden;
+      transition: box-shadow 0.3s;
+      cursor: pointer;
+    }
+
+    .villa-card:hover {
+      box-shadow: 0 8px 20px rgb(26 115 232 / 0.4);
+    }
+
+    .villa-image {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+
+    .villa-info {
+      padding: 15px 18px;
+    }
+
+    .villa-name {
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+      color: #ff385c;
+    }
+
+    .villa-location,
+    .villa-price,
+    .villa-review {
+      color: #444;
+      font-size: 0.9rem;
+      margin-top: 5px;
+    }
+
+    .review-card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgb(0 0 0 / 0.1);
+      padding: 15px 20px;
+      margin-bottom: 18px;
+    }
+
+    .reviewer-name {
+      font-weight: 700;
+      color:#ff385c;
+    }
+
+    .review-text {
+      font-size: 1rem;
+      color: #444;
+    }
+
+    .hero-section {
+      background-image: url('{{ url_for('static', filename='images/bg-villa.jpg') }}');
+      background-size: cover;
+      background-position: center;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .hero-overlay {
+      background-color: rgba(0, 0, 0, 0.45);
+      padding: 50px;
+      border-radius: 12px;
+      text-align: center;
+      color: white;
+      max-width: 700px;
+      width: 100%;
+    }
+
+    .hero-overlay h1 {
+      font-size: 2.5rem;
+      margin-bottom: 30px;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .hero-overlay .search-form {
+      background: transparent;
+      box-shadow: none;
+      padding: 0;
+      color: white;
+    }
+
+    .hero-overlay label {
+      color: #eee;
+      text-align: left;
+    }
+
+    .hero-overlay input {
+      background: white;
+      border-radius: 6px;
+      border: none;
+      margin-bottom: 10px;
+    }
+
+    .hero-overlay button {
+      background: #ff385c;
+      color: white;
+      padding: 12px 28px;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: none;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-left" style="display: flex; align-items: center; gap: 20px;">
+    <a href="/" class="logo">VillaSearch</a>
+
+    {% if name %}
+      {% if role == 'guest' %}
+        <button onclick="window.location.href='{{ url_for('my_bookings') }}'" class="nav-btn">My Bookings</button>
+      {% endif %}
+      {% if role == 'owner' %}
+        <button onclick="window.location.href='{{ url_for('dashboard') }}'" class="nav-btn">My Dashboard</button>
+        <button onclick="window.location.href='{{ url_for('add_villa') }}'" class="nav-btn">Add Villa</button>
+      {% endif %}
+    {% endif %}
+  </div>
+
+  <div class="nav-right" style="position: relative; display: flex; align-items: center; gap: 15px;">
+    {% if name %}
+      <button id="profileBtn" class="nav-btn">Welcome, {{ name }}</button>
+      <div id="profileDropdown" class="profile-dropdown">
+        <div class="profile-pic"></div>
+        <button onclick="window.location.href='{{ url_for('logout') }}'">Logout</button>
+      </div>
+    {% else %}
+      <button id="profileBtn" class="nav-btn">Profile</button>
+      <div id="profileDropdown" class="profile-dropdown">
+        <div class="profile-pic"></div>
+        <button onclick="window.location.href='{{ url_for('login') }}'">Login</button>
+      </div>
+    {% endif %}
+  </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="hero-overlay">
+    <h1>Find Your Perfect Villa Stay</h1>
+    <form class="search-form" method="POST" action="/villas_list">
+      <label for="location">Location</label>
+      <input type="text" id="location" name="location" placeholder="Enter city or area" required />
+
+      <label for="checkin">Check-in</label>
+      <input type="date" id="checkin" name="checkin" required />
+
+      <label for="checkout">Check-out</label>
+      <input type="date" id="checkout" name="checkout" required />
+
+      <button type="submit">Search</button>
+    </form>
+  </div>
+</section>
+
+<!-- Villas Section -->
+<section class="villas-section">
+  <h2 class="section-title">Top Villas</h2>
+  <div class="villas-list">
+    <div class="villa-card">
+      <img src="{{ url_for('static', filename='images/ocean.jpg') }}" class="villa-image" />
+      <div class="villa-info">
+        <div class="villa-name">Ocean View Villa</div>
+        <div class="villa-location">Goa, India</div>
+        <div class="villa-price">₹12,000 / night</div>
+        <div class="villa-review">"Amazing stay with stunning views!"</div>
+      </div>
+    </div>
+    <div class="villa-card">
+      <img src="{{ url_for('static', filename='images/lake.avif') }}" class="villa-image" />
+      <div class="villa-info">
+        <div class="villa-name">Lake Side Villa</div>
+        <div class="villa-location">Udaipur, India</div>
+        <div class="villa-price">₹10,000 / night</div>
+        <div class="villa-review">"Serene lake view with cozy ambiance."</div>
+      </div>
+    </div>
+    <div class="villa-card">
+      <img src="{{ url_for('static', filename='images/mountain.avif') }}" class="villa-image" />
+      <div class="villa-info">
+        <div class="villa-name">Mountain Retreat</div>
+        <div class="villa-location">Manali, India</div>
+        <div class="villa-price">₹9,500 / night</div>
+        <div class="villa-review">"Peaceful and calm location."</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Reviews -->
+<section class="reviews-section">
+  <h2 class="section-title">Customer Reviews</h2>
+  <div class="review-card">
+    <div class="reviewer-name">Amit Sharma</div>
+    <div class="review-text">"Loved the hospitality and the view!"</div>
+  </div>
+  <div class="review-card">
+    <div class="reviewer-name">Neha Gupta</div>
+    <div class="review-text">"Clean rooms and great staff. Worth it."</div>
+  </div>
+</section>
+
+<!-- JS -->
+<script>
+  const profileBtn = document.getElementById("profileBtn");
+  const profileDropdown = document.getElementById("profileDropdown");
+
+  if (profileBtn) {
+    profileBtn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      profileDropdown.classList.toggle("show");
+    });
+  }
+
+  document.addEventListener("click", function (e) {
+    if (profileDropdown && !profileDropdown.contains(e.target) && profileBtn && !profileBtn.contains(e.target)) {
+      profileDropdown.classList.remove("show");
+    }
+  });
+</script>
+
+</body>
+</html>
